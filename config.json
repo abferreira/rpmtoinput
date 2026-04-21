@@ -1,0 +1,13 @@
+{
+    "serial_port": "COM4",
+    "baud_rate": 115200,
+    "num_magnets": 4,
+    "rpm_multiplier": 1.0,
+    "min_rpm": 0.0,
+    "max_rpm": 250.0,
+    "dead_zone_rpm": 5.0,
+    "output_axis": "right_trigger",
+    "smoothing_factor": 5,
+    "joystick_index": 1,
+    "joystick_type": "seriesx"
+}
