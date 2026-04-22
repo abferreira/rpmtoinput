@@ -11,10 +11,13 @@ from rpm_processor import RPMProcessor
 from controller import ControllerOutput
 from joystick_reader import JoystickReader
 from gui import App
+from profile_manager import ProfileManager
 
 
 def main() -> None:
-    config_path = Path(__file__).parent.parent / "config.json"
+    config_path   = Path(__file__).parent.parent / "config.json"
+    profiles_path = Path(__file__).parent.parent / "profiles.json"
+    log_dir       = str(Path(__file__).parent.parent / "workouts")
 
     if not config_path.exists():
         config = AppConfig()
@@ -22,13 +25,19 @@ def main() -> None:
     else:
         config = AppConfig.load(str(config_path))
 
+    manager = ProfileManager(str(profiles_path))
+    manager.load()
+
     rpm_queue: queue.Queue[float | None] = queue.Queue()
     reader     = SerialReader(config.serial_port, config.baud_rate, rpm_queue)
     processor  = RPMProcessor(config)
     controller = ControllerOutput()
     joystick   = JoystickReader(max(0, config.joystick_index))
 
-    app = App(config, str(config_path), reader, processor, controller, rpm_queue, joystick)
+    app = App(
+        config, str(config_path), reader, processor, controller, rpm_queue, joystick,
+        manager=manager, log_dir=log_dir, profiles_path=str(profiles_path),
+    )
     app.mainloop()
 
     reader.stop()
